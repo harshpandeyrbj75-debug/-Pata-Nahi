@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>For You 🎈</title>
+
+  <style>
+    body {
+      margin: 0;
+      background: #0f172a;
+      overflow: hidden;
+      font-family: Arial;
+      color: white;
+      text-align: center;
+    }
+
+    h2 {
+      margin-top: 20px;
+    }
+
+    .balloon {
+      width: 70px;
+      height: 90px;
+      border-radius: 50%;
+      position: absolute;
+      cursor: pointer;
+      animation: float 6s infinite ease-in-out;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-40px); }
+      100% { transform: translateY(0); }
+    }
+
+    #message, #nextScreen, #question {
+      display: none;
+      position: absolute;
+      width: 100%;
+      top: 40%;
+      font-size: 26px;
+      padding: 0 20px;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 20px;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    #yesBtn { background: #22c55e; color: white; }
+    #noBtn { background: #ef4444; color: white; position: absolute; }
+
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+    }
+  </style>
+</head>
+
+<body>
+
+<h2>Pop all balloons 🎈</h2>
+
+<div id="message"></div>
+
+<div id="nextScreen">
+  <p>Tap to continue 😊</p>
+</div>
+
+<div id="question">
+  <p>Do you like talking to me too? 😏</p>
+  <button id="yesBtn">Yes 💚</button>
+  <button id="noBtn">No 😜</button>
+</div>
+
+<canvas id="confetti"></canvas>
+
+<script>
+let count = 0;
+const total = 7;
+
+const colors = ["#ef4444", "#3b82f6", "#22c55e", "#facc15", "#a855f7"];
+
+function createBalloon() {
+  let b = document.createElement("div");
+  b.classList.add("balloon");
+
+  b.style.background = colors[Math.floor(Math.random() * colors.length)];
+  b.style.left = Math.random() * 90 + "vw";
+  b.style.top = Math.random() * 80 + "vh";
+
+  b.onclick = () => {
+    popSound();
+    b.remove();
+    count++;
+
+    if (count === total) {
+      showMessage();
+      launchConfetti();
+    }
+  };
+
+  document.body.appendChild(b);
+}
+
+function popSound() {
+  let audio = new Audio("https://www.soundjay.com/buttons/sounds/button-16.mp3");
+  audio.play();
+}
+
+let text = "I really enjoy talking to you, Anushka… it makes my day better 😊";
+let i = 0;
+
+function typeWriter() {
+  if (i < text.length) {
+    document.getElementById("message").innerHTML += text.charAt(i);
+    i++;
+    setTimeout(typeWriter, 35);
+  }
+}
+
+function showMessage() {
+  let msg = document.getElementById("message");
+  msg.style.display = "block";
+  typeWriter();
+
+  setTimeout(() => {
+    document.getElementById("nextScreen").style.display = "block";
+  }, 3500);
+}
+
+document.getElementById("nextScreen").onclick = () => {
+  document.getElementById("nextScreen").style.display = "none";
+  document.getElementById("message").style.display = "none";
+  document.getElementById("question").style.display = "block";
+};
+
+let noBtn = document.getElementById("noBtn");
+
+function moveNoButton() {
+  noBtn.style.top = Math.random() * 80 + "vh";
+  noBtn.style.left = Math.random() * 80 + "vw";
+}
+
+noBtn.onmouseover = moveNoButton;
+noBtn.onclick = moveNoButton;
+
+document.getElementById("yesBtn").onclick = () => {
+  document.getElementById("question").innerHTML =
+    "I knew it 😌💙";
+};
+
+let canvas = document.getElementById("confetti");
+let ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+function launchConfetti() {
+  let pieces = [];
+
+  for (let i = 0; i < 120; i++) {
+    pieces.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      speed: Math.random() * 3 + 2
+    });
+  }
+
+  function update() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    pieces.forEach(p => {
+      p.y += p.speed;
+      if (p.y > canvas.height) p.y = 0;
+
+      ctx.fillRect(p.x, p.y, 5, 5);
+    });
+
+    requestAnimationFrame(update);
+  }
+
+  update();
+}
+
+for (let i = 0; i < total; i++) {
+  createBalloon();
+}
+</script>
+
+</body>
+</html>
