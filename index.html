@@ -51,7 +51,13 @@
     }
 
     #yesBtn { background: #22c55e; color: white; }
-    #noBtn { background: #ef4444; color: white; position: absolute; }
+
+    #noBtn { 
+      background: #ef4444; 
+      color: white; 
+      position: absolute;
+      transition: all 0.2s ease;
+    }
 
     canvas {
       position: absolute;
@@ -142,9 +148,16 @@ document.getElementById("nextScreen").onclick = () => {
 
 let noBtn = document.getElementById("noBtn");
 
+// ✅ FIXED FUNCTION (never goes outside screen)
 function moveNoButton() {
-  noBtn.style.top = Math.random() * 80 + "vh";
-  noBtn.style.left = Math.random() * 80 + "vw";
+  let maxX = window.innerWidth - noBtn.offsetWidth;
+  let maxY = window.innerHeight - noBtn.offsetHeight;
+
+  let x = Math.random() * maxX;
+  let y = Math.random() * maxY;
+
+  noBtn.style.left = x + "px";
+  noBtn.style.top = y + "px";
 }
 
 noBtn.onmouseover = moveNoButton;
